@@ -11,7 +11,7 @@ import {AuthContext} from '../components/context';
 const SignInScreen = ({navigation}) => {
 
     const [data, setData] = React.useState({
-        email: '',
+        username: '',
         password: '',
         check_textInputChange: false,
         secureTextEntry: true,
@@ -23,13 +23,13 @@ const SignInScreen = ({navigation}) => {
         if (val.length !== 0) {
             setData({
                 ...data,
-                email: val,
+                username: val,
                 check_textInputChange: true,
             });
         } else {
             setData({
                 ...data,
-                email: val,
+                username: val,
                 check_textInputChange: false,
             });
         }
@@ -49,6 +49,10 @@ const SignInScreen = ({navigation}) => {
         });
     };
 
+    const loginHandler = (userName, password)=>{
+        signIn(userName, password);
+    };
+
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#009387' barStyle='light-content'/>
@@ -61,7 +65,7 @@ const SignInScreen = ({navigation}) => {
                 animation='fadeInUpBig'
                 style={styles.footer}
             >
-                <Text style={styles.text_footer}>Email</Text>
+                <Text style={styles.text_footer}>Username</Text>
                 <View style={styles.action}>
                     <FontAwesome
                         name='user-o'
@@ -69,7 +73,7 @@ const SignInScreen = ({navigation}) => {
                         size={20}
                     />
                     <TextInput
-                        placeholder='Your Email'
+                        placeholder='Your Username'
                         style={styles.textInput}
                         autoCapitalize='none'
                         onChangeText={(val) => textInputChange(val)}
@@ -125,7 +129,7 @@ const SignInScreen = ({navigation}) => {
                 <View style={styles.button}>
                   <TouchableOpacity
                       style={styles.signIn}
-                      onPress={()=> signIn()}
+                      onPress={()=> loginHandler(data.username, data.password)}
                   >
                       <LinearGradient
                           colors={['#08d4c4', '#01ab9d']}

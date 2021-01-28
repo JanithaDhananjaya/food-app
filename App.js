@@ -72,19 +72,16 @@ const App = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const authContext = React.useMemo(() => ({
-        signIn: async (userName, password) => {
+        signIn: async (foundUser) => {
             // setUserToken('fjak');
             // setIsLoading(false);
 
-            let userToken;
-            userToken = null;
-            if (userName === 'user' && password === 'pass') {
-                userToken = 'ksjfk';
-                try {
-                    await AsyncStorage.setItem('userToken', userToken);
-                } catch (e) {
-                    console.log(e);
-                }
+            let userToken = String(foundUser[0].userToken);
+            let userName = foundUser[0].userName;
+            try {
+                await AsyncStorage.setItem('userToken', userToken);
+            } catch (e) {
+                console.log(e);
             }
             dispatch({type: 'LOGIN', id: userName, token: userToken});
         },

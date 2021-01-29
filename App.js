@@ -7,9 +7,21 @@
  */
 
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import
+{
+    NavigationContainer,
+    DarkTheme as NavigationDarkTheme,
+    DefaultTheme as NavigationDefaultTheme,
+}
+    from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {View} from 'react-native';
+
+import {
+    Provider as PaperProvider,
+    DarkTheme as PaperDarkTheme,
+    DefaultTheme as PaperDefaultTheme,
+} from 'react-native-paper';
 
 import {DrawerContent} from './screens/DrawerContent';
 
@@ -27,14 +39,37 @@ import AsyncStorage from '@react-native-community/async-storage';
 const Drawer = createDrawerNavigator();
 
 const App = () => {
-    // const [isLoading, setIsLoading] = React.useState(true);
-    // const [userToken, setUserToken] = React.useState(null);
+    const [isDarkTheme, setIsDarkTheme] = React.useState(false);
 
     const initialLoginState = {
         isLoading: true,
         userName: null,
         userToken: null,
     };
+
+    const customDefaultTheme = {
+        ...NavigationDefaultTheme,
+        ...PaperDefaultTheme,
+        colors:{
+            ...NavigationDefaultTheme.colors,
+            ...PaperDefaultTheme.colors,
+            backgroundColor: '#ffffff',
+            text:'#333333'
+        }
+    };
+
+    const customDarkTheme = {
+        ...NavigationDarkTheme,
+        ...PaperDarkTheme,
+        colors:{
+            ...NavigationDarkTheme.colors,
+            ...PaperDarkTheme.colors,
+            backgroundColor: '#333333',
+            text: '#ffffff'
+        }
+    };
+
+    const theme = isDarkTheme ? customDarkTheme : customDefaultTheme;
 
     const loginReducer = (prevState, action) => {
         switch (action.type) {
@@ -100,6 +135,9 @@ const App = () => {
             // setIsLoading(false);
             // dispatch({type: 'LOGIN', id: userName, token: userToken});
         },
+        toggleTheme: () => {
+            setIsDarkTheme(isDarkTheme => !isDarkTheme);
+        },
     }), []);
 
     React.useEffect(() => {
@@ -124,20 +162,22 @@ const App = () => {
     }
 
     return (
-        <AuthContext.Provider value={authContext}>
-            <NavigationContainer>
-                {loginState.userToken !== null ? (
-                    <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
-                        <Drawer.Screen name="HomeDrawer" component={MainTabScreen}/>
-                        <Drawer.Screen name="SupportScreen" component={SupportScreen}/>
-                        <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen}/>
-                        <Drawer.Screen name="SettingsScreen" component={SettingScreen}/>
-                    </Drawer.Navigator>
-                ) : (
-                    <RootStackScreen/>
-                )}
-            </NavigationContainer>
-        </AuthContext.Provider>
+        <PaperProvider theme={theme}>
+            <AuthContext.Provider value={authContext}>
+                <NavigationContainer theme={theme}>
+                    {loginState.userToken !== null ? (
+                        <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
+                            <Drawer.Screen name="HomeDrawer" component={MainTabScreen}/>
+                            <Drawer.Screen name="SupportScreen" component={SupportScreen}/>
+                            <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen}/>
+                            <Drawer.Screen name="SettingsScreen" component={SettingScreen}/>
+                        </Drawer.Navigator>
+                    ) : (
+                        <RootStackScreen/>
+                    )}
+                </NavigationContainer>
+            </AuthContext.Provider>
+        </PaperProvider>
     );
 };
 

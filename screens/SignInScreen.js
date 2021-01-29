@@ -1,11 +1,13 @@
 import React from 'react';
 import {
-    Platform, Text, Dimensions,StatusBar, TouchableOpacity, TextInput, View, StyleSheet, Alert} from 'react-native';
+    Platform, Text, Dimensions, StatusBar, TouchableOpacity, TextInput, View, StyleSheet, Alert,
+} from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import * as Animatable from 'react-native-animatable';
+import {useTheme} from '@react-navigation/native';
 
 import {AuthContext} from '../components/context';
 
@@ -13,13 +15,15 @@ import Users from '../model/users';
 
 const SignInScreen = ({navigation}) => {
 
+    const {colors} = useTheme();
+
     const [data, setData] = React.useState({
         username: '',
         password: '',
         check_textInputChange: false,
         secureTextEntry: true,
         isValidUser: true,
-        isValidPassword: true
+        isValidPassword: true,
     });
 
     const {signIn} = React.useContext(AuthContext);
@@ -30,30 +34,30 @@ const SignInScreen = ({navigation}) => {
                 ...data,
                 username: val,
                 check_textInputChange: true,
-                isValidUser: true
+                isValidUser: true,
             });
         } else {
             setData({
                 ...data,
                 username: val,
                 check_textInputChange: false,
-                isValidUser: false
+                isValidUser: false,
             });
         }
     };
 
     const handlePasswordChange = (val) => {
-        if (val.trim().length >= 8){
+        if (val.trim().length >= 8) {
             setData({
                 ...data,
                 password: val,
-                isValidPassword: true
+                isValidPassword: true,
             });
-        }else{
+        } else {
             setData({
                 ...data,
                 password: val,
-                isValidPassword: false
+                isValidPassword: false,
             });
         }
     };
@@ -65,21 +69,21 @@ const SignInScreen = ({navigation}) => {
         });
     };
 
-    const loginHandler = (userName, password)=>{
-        const foundUser = Users.filter(item=> {
+    const loginHandler = (userName, password) => {
+        const foundUser = Users.filter(item => {
             return userName === item.username && password === item.password;
         });
 
         if (userName.length === 0 || password.length === 0) {
-            Alert.alert("Wrong Input", 'Username or Password fields cannot be empty.', [
-                {text: 'Okay'}
+            Alert.alert('Wrong Input', 'Username or Password fields cannot be empty.', [
+                {text: 'Okay'},
             ]);
             return;
         }
 
         if (foundUser.length === 0) {
-            Alert.alert("Invalid User", 'Incorrect Username or Password', [
-                {text: 'Okay'}
+            Alert.alert('Invalid User', 'Incorrect Username or Password', [
+                {text: 'Okay'},
             ]);
             return;
         }
@@ -96,18 +100,24 @@ const SignInScreen = ({navigation}) => {
             </View>
             <Animatable.View
                 animation='fadeInUpBig'
-                style={styles.footer}
+                style={[styles.footer, {
+                    backgroundColor: colors.background,
+                }]}
             >
-                <Text style={styles.text_footer}>Username</Text>
+                <Text style={[styles.text_footer, {
+                    color: colors.text,
+                }]}>Username</Text>
                 <View style={styles.action}>
                     <FontAwesome
                         name='user-o'
-                        color='#05375a'
+                        color={colors.text}
                         size={20}
                     />
                     <TextInput
                         placeholder='Your Username'
-                        style={styles.textInput}
+                        style={[styles.textInput,{
+                            color: colors.text
+                        }]}
                         autoCapitalize='none'
                         onChangeText={(val) => textInputChange(val)}
                     />
@@ -132,17 +142,17 @@ const SignInScreen = ({navigation}) => {
                     )
                 }
 
-                <Text style={[styles.text_footer, {marginTop: 35}]}>Password</Text>
+                <Text style={[styles.text_footer, {marginTop: 35}, {color: colors.text}]}>Password</Text>
                 <View style={styles.action}>
                     <Feather
                         name='lock'
-                        color='#05375a'
+                        color={colors.text}
                         size={20}
                     />
                     <TextInput
                         placeholder='Your Password'
                         secureTextEntry={data.secureTextEntry}
-                        style={styles.textInput}
+                        style={[styles.textInput,{color: colors.text}]}
                         autoCapitalize='none'
                         onChangeText={(val) => handlePasswordChange(val)}
                     />
@@ -174,21 +184,21 @@ const SignInScreen = ({navigation}) => {
                     <Text style={{color: '#009387', marginTop: 15}}>Forget Password?</Text>
                 </TouchableOpacity>
                 <View style={styles.button}>
-                  <TouchableOpacity
-                      style={styles.signIn}
-                      onPress={()=> loginHandler(data.username, data.password)}
-                  >
-                      <LinearGradient
-                          colors={['#08d4c4', '#01ab9d']}
-                          style={styles.signIn}
-                      >
-                          <Text style={[styles.textSign, {
-                              color: '#fff',
-                          }]}>
-                              Sign In
-                          </Text>
-                      </LinearGradient>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.signIn}
+                        onPress={() => loginHandler(data.username, data.password)}
+                    >
+                        <LinearGradient
+                            colors={['#08d4c4', '#01ab9d']}
+                            style={styles.signIn}
+                        >
+                            <Text style={[styles.textSign, {
+                                color: '#fff',
+                            }]}>
+                                Sign In
+                            </Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => navigation.navigate('SignUpScreen')}
